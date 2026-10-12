@@ -5,12 +5,12 @@
 - 点击或拖动棋子走棋，支持整轮悔棋、自动续局、落子音效
 - 中文棋谱记录、逐步回放、文本导出
 - 中炮、仕角炮、仙人指路、冷门布局、起马、过宫炮、金钩炮、飞相等开局分类
-- 11 盘大师实战棋谱，覆盖 8 种开局，支持逐手回放、点棋盘前进
+- 83 盘大师实战棋谱，覆盖 8 种开局，支持逐手回放、点棋盘前进
 - 小学生新手教程、走棋提示与简明规则说明
 - 添加主屏幕、首次成功缓存后离线使用
 无需构建和第三方网络依赖。AI 通过 Web Worker 计算，落子声由 Web Audio 本地合成。
 
-赛事棋谱来源：Chinese Chess Practical Dataset (CCPD)，Yu-Han Tseng & Bo-Nian Chen (2026)，CC BY 4.0。数据集说明称收录 53,953 盘完整对局。本应用精选 11 盘，保留赛事、棋手及原棋谱信息，并按本游戏规则引擎逐手校验。来源及许可：https://github.com/Yvonne761/Chinese-Chess-Practical-Dataset ，https://creativecommons.org/licenses/by/4.0/。
+赛事棋谱来源：Chinese Chess Practical Dataset (CCPD)，Yu-Han Tseng & Bo-Nian Chen (2026)，CC BY 4.0。数据集说明称收录 53,953 盘完整对局。本应用精选 83 盘，保留赛事、棋手及原棋谱信息，并按本游戏规则引擎逐手校验。来源及许可：https://github.com/Yvonne761/Chinese-Chess-Practical-Dataset ，https://creativecommons.org/licenses/by/4.0/。
 
 休闲和棋规则：三次重复、120半回合无吃子。未实施专业赛场长将长捉裁定。挑战档为浏览器轻量搜索引擎，不代表专业象棋软件等级。
 验证：`node test-engine.cjs`、`node ../test-ui.cjs`；初始局面红黑方均44合法着法、perft 44/1920、兵首步合法、鼠标/触屏点击与拖动、11盘棋谱解析回放、三级 AI。
