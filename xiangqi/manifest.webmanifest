@@ -1,1 +1,1 @@
-{"name":"楚河 · 中国象棋","short_name":"楚河象棋","id":"./","start_url":"./","scope":"./","display":"standalone","orientation":"portrait-primary","background_color":"#202e28","theme_color":"#202e28","icons":[{"src":"icon.png","sizes":"512x512","type":"image/png","purpose":"any"}]}
+{"name":"中国象棋","short_name":"中国象棋","id":"./","start_url":"./","scope":"./","display":"standalone","orientation":"portrait-primary","background_color":"#f3eee5","theme_color":"#f3eee5","icons":[{"src":"icon.png","sizes":"512x512","type":"image/png","purpose":"any"}]}
