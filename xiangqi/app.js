@@ -64,32 +64,34 @@ if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch((
 
 
 const lessons=[
- {type:4,name:'車／车',glyph:'車',text:'车走直线：横向和纵向都能走，路上没有棋子时可以走任意格。前方有子就必须停下，不能跳过去。',from:40,steps:[{text:'先看横向：车沿同一条横线连续走。',to:44},{text:'再看纵向：车沿同一条竖线连续走。',to:13}]},
- {type:3,name:'馬／马',glyph:'馬',text:'马走“日”字，不会横着走。先朝一个方向跨两格，再拐一格；第一步旁边的“马腿”被堵住，这个方向就走不了。',from:40,steps:[{text:'马走日字：先向上跨两格，再向左拐一格。马是跳跃走法，不会停在中间格。',to:21},{text:'马腿被挡：左侧放一枚棋子后，左上方这个日字落点就不能走。',to:29,block:39,denied:29}]},
- {type:2,name:'相／象',glyph:'相',text:'相（象）走“田”字的对角，每次斜走两格；中间有子会塞象眼，而且不能过河。',from:67,steps:[{text:'相走田字的一整条对角线，不能只走一格斜线。',to:47},{text:'红相不能过河，河对岸的田字落点会被禁止。',to:29,denied:29},{text:'相眼被棋子堵住：这一个田字方向也走不了。',to:47,block:57,denied:47}]},
- {type:1,name:'仕／士',glyph:'仕',text:'仕（士）只能在己方九宫内斜走一格，不能出九宫。',from:76,steps:[{text:'从九宫中心斜走一格。',to:66},{text:'九宫边界外的斜向落点不能走。',to:56,denied:56}]},
- {type:5,name:'帥／将',glyph:'帅',text:'帅（将）只能在九宫里前、后、左、右走一格，不能斜走，也不能走出九宫；还要避开对方攻击。',from:76,steps:[{text:'九宫中心可以向前、后、左、右各走一格。',to:67},{text:'斜角不是合法落点；九宫外也不能走。',to:66,denied:66}]},
- {type:6,name:'炮',glyph:'炮',text:'炮不吃子时像车一样沿直线走；吃子时必须隔着且只能隔着一枚棋子（炮架），才能吃后面的对方棋子。',from:40,steps:[{text:'前方没有棋子时，炮沿直线走。',to:13},{text:'隔一枚炮架才能吃子；没有炮架或隔着两枚都不能吃。',to:13,block:22,target:13}]},
- {type:7,name:'兵／卒',glyph:'兵',text:'兵卒未过河只能向前一格。过河后可向前、向左、向右各一格，仍不能后退。',from:58,pawn:true,steps:[{text:'未过河：只能向前一格，左右和后退都不行。',to:49,denied:67},{text:'过河后：向前、左、右各一格；向后仍然禁止。',to:31,denied:49}]}
+ {type:4,name:'車／车',glyph:'車',rule:'车可以横走、竖走，方向不变；路上没有棋子时能走任意格。车不能跳过棋子，遇到对方棋子可以吃掉并停在它的位置。',scenes:[{from:40,text:'看四条绿色箭头：车沿横线或竖线走，想走几格都可以。动画逐方向走到路线尽头。'},{from:40,blockers:[42],denied:[43],text:'黑棋挡在前面：车可以吃掉挡路的黑棋，但不能越过它走到后面的红叉格。'}]},
+ {type:3,name:'馬／马',glyph:'馬',rule:'马走“日”字：先沿横或竖方向走两格，再拐一格。马不会横着走，也不会像车一样直走。紧挨着的“马腿”被堵住时，该方向的日字落点走不了。',scenes:[{from:40,text:'每个绿色箭头都是一个完整的“日”字落点。动画按“先走两格、再拐一格”的路线逐个演示。'},{from:40,blockers:[39],denied:[29],text:'左上方向的马腿被黑棋堵住了，所以左上角的日字落点变成红叉；其他没被绊住的方向仍能走。'}]},
+ {type:2,name:'相／象',glyph:'相',rule:'相（象）沿斜线走两格，落点组成“田”字的四个角。中间那格叫象眼，被棋子占住就不能走。红相只能留在河的下半边，不能过河。',scenes:[{from:67,text:'相从这里沿斜线走两格，四个田字角都是落点；动画会逐个走一遍。'},{from:67,blockers:[57],denied:[47],text:'左上方的象眼被黑棋挡住了，红叉处不能走；其余象眼畅通的方向可以走。'},{from:49,denied:[29,33],text:'红相在河边时，不能跳到河对岸的红叉格；只能在自己这边走田字。'}]},
+ {type:1,name:'仕／士',glyph:'仕',rule:'仕（士）每次斜走一格，只能在己方九宫里的五个交叉点活动；不能出九宫。',scenes:[{from:76,text:'九宫中心的仕可以沿四条斜线各走一格，动画逐个演示。'},{from:66,denied:[58,56,74],text:'到九宫边上后，红叉都是斜着一步就会走出九宫的位置，仕不能走出去。'}]},
+ {type:5,name:'帥／将',glyph:'帥',rule:'帅（将）每次向前、向后、向左或向右走一格，只能留在己方九宫内。帅将不能面对面，也不能走进对方棋子的攻击范围。',scenes:[{from:76,text:'九宫中心的帅有前、后、左、右四个落点；动画逐个走一格。帅不走斜线。'},{from:67,denied:[58],text:'到九宫上沿后，红叉格已经在九宫外，帅不能继续向前走；其他九宫内的直线格仍可走。'}]},
+ {type:6,name:'炮',glyph:'炮',rule:'炮不吃子时和车一样，沿直线走，不能越过棋子。炮吃子时必须隔着且只能隔着一枚棋子（炮架），吃掉炮架后面的第一枚对方棋子。',scenes:[{from:40,text:'前面没有棋子时，炮和车一样沿四条直线走；箭头显示可以停下的位置。'},{from:40,blockers:[31],captures:[13],denied:[4],text:'黑棋炮架后面第一枚黑棋可以被吃；再往后的红叉不能吃。若没有炮架，炮也不能隔空吃子。'}]},
+ {type:7,name:'兵／卒',glyph:'兵',rule:'兵卒没过河时只能向前走一格。过河后可以向前、向左、向右各走一格；任何时候都不能后退。',scenes:[{from:58,denied:[67,57,59],text:'兵还没过河：只能向前一格。左右和后退都不能走，红叉标出这三个方向。'},{from:40,denied:[49],text:'兵已经过河：可以向前、向左、向右各走一格；向后的红叉仍然不能走。'}]}
 ];
 let lessonStage=0;
 function drawLesson(){
- let l=lessons[lessonIndex];lessonStage=Math.min(lessonStage,l.steps.length-1);
- $('lessonTabs').replaceChildren();lessons.forEach((x,i)=>{let b=document.createElement('button');b.textContent=x.name;b.className=i===lessonIndex?'active':'';b.onclick=()=>{lessonIndex=i;lessonStage=0;drawLesson()};$('lessonTabs').append(b)});
- let step=l.steps[lessonStage],b=Array(90).fill(0),from=l.pawn&&lessonStage===1?40:l.from;b[3]=-5;b[76]=5;b[from]=l.type;
- if(step.block!==undefined)b[step.block]=step.block===22?-4:-7;
- if(l.type===6&&lessonStage===1){b[step.to]=-4;if(step.block!==undefined)b[step.block]=-7}
- $('lessonCopy').textContent=step.text;
- let targets=E.pseudo(b,from),cell=i=>[50+(i%9)*100,50+Math.floor(i/9)*100];
- let svg='<svg class="lesson-board" viewBox="0 0 900 1000" role="img" aria-label="象棋棋盘走法演示">';
- for(let y=0;y<10;y++)svg+='<path d="M50 '+(50+y*100)+'H850"/>';
- for(let x=0;x<9;x++)svg+='<path d="M'+(50+x*100)+' 50V450"/><path d="M'+(50+x*100)+' 550V950"/>';
+ const l=lessons[lessonIndex];lessonStage=Math.max(0,Math.min(lessonStage,l.scenes.length-1));
+ $('lessonTabs').replaceChildren();lessons.forEach((item,i)=>{const button=document.createElement('button');button.textContent=item.name;button.className=i===lessonIndex?'active':'';button.setAttribute('aria-pressed',String(i===lessonIndex));button.onclick=()=>{lessonIndex=i;lessonStage=0;drawLesson()};$('lessonTabs').append(button)});
+ const scene=l.scenes[lessonStage],board=Array(90).fill(0),from=scene.from;board[from]=l.type;for(const i of scene.blockers||[])board[i]=-7;for(const i of scene.captures||[])board[i]=-4;
+ $('lessonCopy').textContent='走法：'+l.rule+' 演示：'+scene.text;
+ const cell=i=>[50+(i%9)*100,50+Math.floor(i/9)*100],xy=i=>[i%9,Math.floor(i/9)],moves=E.pseudo(board,from),[sx,sy]=xy(from);
+ // Long-range pieces are shown as four complete rays. Other pieces get one arrow per legal landing.
+ let routes=moves.map(to=>({to,path:[from,to]}));
+ if([4,6].includes(l.type)){const dirs=[[1,0],[-1,0],[0,1],[0,-1]];routes=dirs.map(([dx,dy])=>{const ray=moves.filter(to=>{const [x,y]=xy(to);return (dx===0?x===sx:(x-sx)*dx>0)&&(dy===0?y===sy:(y-sy)*dy>0)&&((dx===0&&dy*(y-sy)>0)||(dy===0&&dx*(x-sx)>0))}).sort((a,b)=>Math.abs(b%9-sx)+Math.abs(Math.floor(b/9)-sy)-Math.abs(a%9-sx)-Math.abs(Math.floor(a/9)-sy));return ray[0]?{to:ray[0],path:[from,ray[0]]}:null}).filter(Boolean)}
+ const pathFor=route=>{if(l.type!==3)return route.path;const [x1,y1]=xy(from),[x2,y2]=xy(route.to),dx=x2-x1,dy=y2-y1,leg=Math.abs(dx)===2?(y1*9+x1+Math.sign(dx)):((y1+Math.sign(dy))*9+x1);return[from,leg,route.to]};
+ let svg='<svg class="lesson-board" viewBox="0 0 900 1000" role="img" aria-label="'+l.name+'在象棋棋盘上的完整走法演示"><defs><marker id="lessonArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#37805d"/></marker><marker id="lessonCapture" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#a33b2e"/></marker></defs>';
+ for(let y=0;y<10;y++)svg+='<path d="M50 '+(50+y*100)+'H850"/>';for(let x=0;x<9;x++)svg+='<path d="M'+(50+x*100)+' 50V450"/><path d="M'+(50+x*100)+' 550V950"/>';
  svg+='<path d="M50 450V550 M850 450V550 M350 50L550 250 M550 50L350 250 M350 750L550 950 M550 750L350 950"/><text x="300" y="520">楚 河</text><text x="600" y="520">汉 界</text>';
- for(let i=0;i<90;i++)if(b[i]){let [x,y]=cell(i),piece=b[i],glyph=pieceGlyphs[Math.abs(piece)][piece>0?0:1],focus=i===from,animation='';if(focus&&step.to!==undefined&&targets.includes(step.to)){let [tx,ty]=cell(step.to),values=x+' '+y;if(l.type===3){let leg=(Math.abs(step.to%9-from%9)===2)?Math.floor(from/9)*9+from%9+Math.sign(step.to%9-from%9):from+Math.sign(Math.floor(step.to/9)-Math.floor(from/9))*9;let [lx,ly]=cell(leg);values+=';'+lx+' '+ly}animation='<animateTransform attributeName="transform" type="translate" values="'+values+';'+tx+' '+ty+';'+x+' '+y+'" dur="3s" repeatCount="indefinite"/>'}svg+='<g class="lesson-piece '+(piece>0?'red':'black')+(focus?' focus':'')+'" transform="translate('+x+' '+y+')"><circle r="39"/><circle class="inner" r="33"/><text y="12">'+glyph+'</text>'+animation+'</g>'}
- for(let i of targets){let [x,y]=cell(i);svg+='<circle class="lesson-target" cx="'+x+'" cy="'+y+'" r="13"/>'}
- if(step.denied!==undefined){let [x,y]=cell(step.denied);svg+='<g class="lesson-denied" transform="translate('+x+' '+y+')"><circle r="22"/><path d="M-10 -10L10 10M10 -10L-10 10"/></g>'}
- if(step.to!==undefined){let [x1,y1]=cell(from),[x2,y2]=cell(step.to),path='M'+x1+' '+y1+' L'+x2+' '+y2;if(l.type===3){let leg=(Math.abs(step.to%9-from%9)===2)?Math.floor(from/9)*9+from%9+Math.sign(step.to%9-from%9):from+Math.sign(Math.floor(step.to/9)-Math.floor(from/9))*9;let [lx,ly]=cell(leg);path='M'+x1+' '+y1+' L'+lx+' '+ly+' L'+x2+' '+y2}svg+='<path class="lesson-path" d="'+path+'"/><circle class="lesson-active" cx="'+x2+'" cy="'+y2+'" r="38"/>'}
- svg+='</svg>';let visual=$('tutorialVisual');visual.innerHTML=svg;let controls=$('lessonControls');controls.replaceChildren();let prev=document.createElement('button'),label=document.createElement('span'),next=document.createElement('button');prev.className='btn';next.className='btn';prev.textContent='上一步';next.textContent='下一步';prev.disabled=lessonStage===0;next.disabled=lessonStage===l.steps.length-1;label.textContent='演示 '+(lessonStage+1)+' / '+l.steps.length;prev.onclick=()=>{lessonStage--;drawLesson()};next.onclick=()=>{lessonStage++;drawLesson()};controls.append(prev,label,next);
+ for(const route of routes){const pts=pathFor(route).map(cell),d=pts.map(([x,y],i)=>(i?'L':'M')+x+' '+y).join(' '),capture=(scene.captures||[]).includes(route.to);svg+='<path class="lesson-path'+(capture?' capture':'')+'" d="'+d+'" marker-end="url(#'+(capture?'lessonCapture':'lessonArrow')+')"/>';const [x,y]=cell(route.to);if(!capture)svg+='<circle class="lesson-target" cx="'+x+'" cy="'+y+'" r="11"/>'}
+ for(const i of scene.denied||[]){const [x,y]=cell(i);svg+='<g class="lesson-denied" transform="translate('+x+' '+y+')"><circle r="22"/><path d="M-10 -10L10 10M10 -10L-10 10"/></g>'}
+ const pieceSvg=(i,p,animate=false)=>{const [x,y]=cell(i),glyph=pieceGlyphs[Math.abs(p)][p>0?0:1];let motion='';if(animate&&routes.length){const segments=[];for(const route of routes){const points=pathFor(route),last=points[points.length-1];for(const point of points.slice(1)){const [px,py]=cell(point);segments.push('L'+(px-x)+' '+(py-y))}segments.push('L0 0')}motion='<animateMotion path="M0 0 '+segments.join(' ')+'" dur="'+Math.max(4,routes.length*1.1)+'s" repeatCount="indefinite" additive="sum"/>'}return '<g class="lesson-piece '+(p>0?'red':'black')+(animate?' focus animated':'')+'" transform="translate('+x+' '+y+')"><circle r="38"/><circle class="inner" r="31"/><text y="12">'+glyph+'</text>'+motion+'</g>'};
+ for(let i=0;i<90;i++)if(board[i])svg+=pieceSvg(i,board[i],i===from);
+ svg+='</svg>';const visual=$('tutorialVisual');visual.innerHTML=svg;
+ const controls=$('lessonControls');controls.replaceChildren();const prev=document.createElement('button'),label=document.createElement('span'),next=document.createElement('button');prev.className='btn';next.className='btn';prev.textContent='上一个';next.textContent='下一个';prev.disabled=lessonStage===0;next.disabled=lessonStage===l.scenes.length-1;label.textContent=l.name+' · 演示 '+(lessonStage+1)+' / '+l.scenes.length;prev.onclick=()=>{lessonStage--;drawLesson()};next.onclick=()=>{lessonStage++;drawLesson()};controls.append(prev,label,next);
 }
 function peerScript(){return new Promise((resolve,reject)=>{if(!window.isSecureContext||typeof window.RTCPeerConnection==='undefined')return reject(Error('当前浏览器未开放实时联机功能。请用手机 Safari 或 Chrome 打开 HTTPS 邀请链接，也可以选择“同一手机轮流下棋”。'));if(window.Peer)return resolve();let s=document.createElement('script');s.src='https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js';s.onload=()=>window.Peer?resolve():reject(Error('联机组件加载失败'));s.onerror=()=>reject(Error('联机组件加载失败，请检查网络'));document.head.append(s)})}
 function roomState(t){$('friendStatus').textContent='连接状态：'+t}
